@@ -3,6 +3,7 @@ package com.aptech.dailyfeed;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Bundle;
 import android.widget.Toast;
@@ -21,6 +22,7 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
+    SwipeRefreshLayout swipeRefreshLayout;
     final String API_KEY = "b30aa9ca326e470fad938bb4aa165c3b";
     Adapter adapter;
     List<Articles> articles = new ArrayList<>();
@@ -30,19 +32,33 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        swipeRefreshLayout = findViewById(R.id.swipeRefresh);
+
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        String country = getCountry();
+        final String country = getCountry();
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                retrieveJson(country,"business",API_KEY);
+            }
+        });
+
         retrieveJson(country,"business",API_KEY);
 
     }
 
     public void retrieveJson(String country, String category, String apiKey) {
+
+        swipeRefreshLayout.setRefreshing(true);
+
         Call<Headlines> call = ApiClient.getInstance().getApi().getHeadlines(country,category,apiKey);
         call.enqueue(new Callback<Headlines>() {
             @Override
             public void onResponse(Call<Headlines> call, Response<Headlines> response) {
                 if (response.isSuccessful() && response.body().getArticles() != null) {
+                    swipeRefreshLayout.setRefreshing(false);
                     articles.clear();
                     articles = response.body().getArticles();
                     adapter = new Adapter(MainActivity.this,articles);
@@ -52,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Headlines> call, Throwable t) {
+                swipeRefreshLayout.setRefreshing(false);
                 Toast.makeText(MainActivity.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
             }
         });
