@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         String country = getCountry();
-        retrieveJson("us","business",API_KEY);
+        retrieveJson(country,"business",API_KEY);
 
     }
 

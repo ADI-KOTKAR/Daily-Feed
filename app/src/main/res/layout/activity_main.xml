@@ -16,7 +16,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="NEWS"
+            android:text="DAILY FEED"
             android:layout_weight="10"
             android:fontFamily="@font/g_bold"
             android:textColor="@color/black"
