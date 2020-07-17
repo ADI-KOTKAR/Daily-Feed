@@ -13,4 +13,10 @@ public interface ApiInterface {
         @Query("category") String category,
         @Query("apiKey") String apiKey
     );
+
+    @GET("everything")
+    Call<Headlines> getSpecificData(
+            @Query("q") String query,
+            @Query("apiKey") String apiKey
+    );
 }

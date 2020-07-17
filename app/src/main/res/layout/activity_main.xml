@@ -24,13 +24,16 @@
             android:layout_marginLeft="10dp"
             android:background="@color/white"
             android:padding="10dp"/>
+
         <Button
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_marginTop="10dp"
+            android:id="@+id/btnAboutUs"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_marginRight="20dp"
+            android:layout_marginTop="5dp"
+            android:background="@mipmap/ic_info"
             android:padding="10dp"
-            android:id="@+id/aboutUs"/>
+            android:visibility="visible" />
 
 
     </LinearLayout>
@@ -52,8 +55,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Search"
-            android:fontFamily="@font/g_bold"
+            android:hint="Search Anything here..."
+            android:fontFamily="@font/g_light"
             android:textColor="@color/grey"
             android:textColorHint="@color/grey"
             android:padding="10dp"

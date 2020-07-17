@@ -5,7 +5,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.app.Dialog;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.aptech.dailyfeed.Model.Articles;
@@ -23,6 +27,9 @@ public class MainActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
     SwipeRefreshLayout swipeRefreshLayout;
+    EditText etQuery;
+    Button btnSearch, btnAboutUs;
+    Dialog dialog;
     final String API_KEY = "b30aa9ca326e470fad938bb4aa165c3b";
     Adapter adapter;
     List<Articles> articles = new ArrayList<>();
@@ -33,27 +40,67 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         swipeRefreshLayout = findViewById(R.id.swipeRefresh);
-
         recyclerView = findViewById(R.id.recyclerView);
+
+        etQuery = findViewById(R.id.etQuery);
+        btnSearch = findViewById(R.id.btnSearch);
+
+        btnAboutUs = findViewById(R.id.btnAboutUs);
+        dialog = new Dialog(MainActivity.this);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         final String country = getCountry();
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                retrieveJson(country,"business",API_KEY);
+                retrieveJson("", country, "business",API_KEY);
+            }
+        });
+        retrieveJson("",country,"business",API_KEY);
+
+        btnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!etQuery.getText().toString().equals("")) {
+                    swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                        @Override
+                        public void onRefresh() {
+                            retrieveJson(etQuery.getText().toString(),country,"business",API_KEY);
+                        }
+                    });
+                    retrieveJson(etQuery.getText().toString(),country,"business",API_KEY);
+                } else {
+                    swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                        @Override
+                        public void onRefresh() {
+                            retrieveJson("", country, "business",API_KEY);
+                        }
+                    });
+                    retrieveJson("",country,"business",API_KEY);
+                }
             }
         });
 
-        retrieveJson(country,"business",API_KEY);
+        btnAboutUs.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDialog();
+            }
+        });
 
     }
 
-    public void retrieveJson(String country, String category, String apiKey) {
+    public void retrieveJson(String query, String country, String category, String apiKey) {
 
         swipeRefreshLayout.setRefreshing(true);
+        Call<Headlines> call;
+        if (!etQuery.getText().toString().equals("")) {
+            call = ApiClient.getInstance().getApi().getSpecificData(query,apiKey);
+        } else {
+            call = ApiClient.getInstance().getApi().getHeadlines(country,category,apiKey);
+        }
 
-        Call<Headlines> call = ApiClient.getInstance().getApi().getHeadlines(country,category,apiKey);
         call.enqueue(new Callback<Headlines>() {
             @Override
             public void onResponse(Call<Headlines> call, Response<Headlines> response) {
@@ -78,6 +125,20 @@ public class MainActivity extends AppCompatActivity {
         Locale locale = Locale.getDefault();
         String country = locale.getCountry();
         return country.toLowerCase();
+    }
+
+    public void showDialog(){
+        Button btnClose;
+        dialog.setContentView(R.layout.about_us);
+        dialog.show();
+        btnClose = dialog.findViewById(R.id.close);
+
+        btnClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
     }
 
 }

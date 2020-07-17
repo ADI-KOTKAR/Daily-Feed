@@ -6,9 +6,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/logo"
+        android:icon="@mipmap/feed_logo1"
         android:label="Daily Feed"
-        android:roundIcon="@drawable/circle_logo"
+        android:roundIcon="@mipmap/feed_logo1_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".Detailed"></activity>
