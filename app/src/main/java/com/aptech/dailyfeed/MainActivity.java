@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.aptech.dailyfeed.Model.Articles;
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     final String API_KEY = "b30aa9ca326e470fad938bb4aa165c3b";
     Adapter adapter;
     List<Articles> articles = new ArrayList<>();
+    LinearLayout errorLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +52,9 @@ public class MainActivity extends AppCompatActivity {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         final String country = getCountry();
+
+        //Error
+        errorLayout = findViewById(R.id.errorLayout);
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -116,6 +121,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<Headlines> call, Throwable t) {
                 swipeRefreshLayout.setRefreshing(false);
+                if (errorLayout.getVisibility() == View.GONE) {
+                    errorLayout.setVisibility(View.VISIBLE);
+                }
                 Toast.makeText(MainActivity.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -140,5 +148,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
 
 }
